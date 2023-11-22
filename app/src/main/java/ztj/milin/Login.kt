@@ -21,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Login(user: String, onLoginSuccess: (name: String) -> Unit) {
@@ -70,6 +69,7 @@ fun Login(user: String, onLoginSuccess: (name: String) -> Unit) {
                 Button(
                     onClick = {
                         // 在这里执行登录逻辑
+
                         // 你可以验证用户名和密码，然后根据结果采取操作
                         if (username == "your_username" && password == "your_password") {
                             // 登录成功
@@ -90,4 +90,5 @@ fun Login(user: String, onLoginSuccess: (name: String) -> Unit) {
         }
     }
 }
+
 
