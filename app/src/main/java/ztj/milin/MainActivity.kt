@@ -3,31 +3,19 @@ package ztj.milin
 
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import ztj.milin.ui.theme.MilinTheme
+
 
 class MainActivity : ComponentActivity() {
 
     var user = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-        WindowInsetsControllerCompat(window, window.decorView).let { controller ->
-            controller.hide(WindowInsetsCompat.Type.systemBars())
-            controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-        }
-        window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+
 
         // Initialize Firebase Auth(deleted)
 
@@ -35,9 +23,11 @@ class MainActivity : ComponentActivity() {
 //        actionBar?.hide()
         createAccount("2287315312@qq.com","11vda89")
         setContent {
+//                    val intent = Intent(this, FullscreenActivity::class.java)
+//        startActivity(intent)
             MilinTheme {
                 // 创建登录状态变量
-                val currentUser = auth.currentUser
+//                val currentUser = auth.currentUser
 //                if (currentUser!=null)
 //                    Main(user)
 //                else {
