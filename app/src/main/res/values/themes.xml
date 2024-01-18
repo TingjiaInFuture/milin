@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.Milin" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.Milin" parent="android:Theme.Material.NoActionBar" />
 
     <style name="Theme.Milin.Fullscreen" parent="Theme.Milin">
         <item name="android:actionBarStyle">@style/Widget.Theme.Milin.ActionBar.Fullscreen</item>
         <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:windowSplashScreenBackground">@color/light_blue_600</item>
+        <item name="android:windowFullscreen">true</item>
         <item name="android:windowBackground">@null</item>
     </style>
 

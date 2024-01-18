@@ -1,10 +1,7 @@
 package ztj.milin
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
@@ -17,18 +14,27 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Main(user: String) {
+fun Main(user: User) {
+    val systemUiController = rememberSystemUiController()
+    SideEffect {
+        // 设置状态栏为透明，并根据主题颜色设置状态栏图标颜色
+        systemUiController.setSystemBarsColor(
+            color = Color(0xFFADD8E6)
+        )
+    }
+
     var selectedTab by remember { mutableStateOf(Tab.Discover) }
     var selectedCategory by remember { mutableStateOf("") }
     val snackbarHostState = remember { SnackbarHostState() }
@@ -62,7 +68,7 @@ fun Main(user: String) {
                     onCategoryRemoved = { /* 在这里处理删除类别的操作 */ }
                 )
 
-                Tab.Chat -> Chat()
+                Tab.Chat -> Chat(user)
             }
 
 //            SnackbarHost(

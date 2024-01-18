@@ -1,11 +1,9 @@
 package ztj.milin
 
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 
-data class User(val id: Int, val name: String)
- var auth: FirebaseAuth = Firebase.auth
+
+data class User(var id: Int, var name: String)
+
 // 新建类别
 fun addCategory(category: String) {
     categories.add(category)
@@ -17,6 +15,21 @@ fun removeCategory(category: String) {
     subcategories.remove(category) // 同时删除子类别
 }
 
+// 更新类别
+fun updateCategory(oldCategory: String, newCategory: String) {
+    val index = categories.indexOf(oldCategory)
+    if (index != -1) {
+        // 如果旧类别存在，替换为新类别
+        categories[index] = newCategory
+
+        // 同时更新子类别
+        subcategories[newCategory] = subcategories.remove(oldCategory) ?: arrayListOf()
+    } else {
+        println("类别 $oldCategory 不存在.")
+    }
+}
+
+
 val userList = listOf(
     User(1, "User A"),
     User(2, "User B"),
@@ -27,6 +40,7 @@ val userList = listOf(
 enum class Tab { Discover, Chat }
 
 val categories = arrayListOf("类别1", "类别2", "类别3")
+
 val subcategories = mutableMapOf(
     "类别1" to arrayListOf("子类别1A", "子类别1B", "子类别1C"),
     "类别2" to arrayListOf("子类别2A", "子类别2B"),

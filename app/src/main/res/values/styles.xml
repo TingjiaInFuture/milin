@@ -1,0 +1,16 @@
+<resources>
+
+    <style name="Widget.Theme.Milin.ActionBar.Fullscreen" parent="Widget.AppCompat.ActionBar">
+        <item name="android:background">@color/black_overlay</item>
+    </style>
+    <style name="Theme.YourApp" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- 其他主题属性... -->
+<!--        <item name="android:windowSplashScreenBackground">@color/your_color</item>-->
+
+    </style>
+
+    <style name="Widget.Theme.Milin.ButtonBar.Fullscreen" parent="">
+        <item name="android:background">@color/black_overlay</item>
+        <item name="android:buttonBarStyle">?android:attr/buttonBarStyle</item>
+    </style>
+</resources>
