@@ -29,14 +29,14 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 fun Main(user: User) {
     val systemUiController = rememberSystemUiController()
     SideEffect {
-        // 设置状态栏为透明，并根据主题颜色设置状态栏图标颜色
+        // 设置状态栏颜色
         systemUiController.setSystemBarsColor(
             color = Color(0xFFADD8E6)
         )
     }
 
     var selectedTab by remember { mutableStateOf(Tab.Discover) }
-    var selectedCategory by remember { mutableStateOf("") }
+    var selectedCategory by remember { mutableStateOf("") }//状态提升
     val snackbarHostState = remember { SnackbarHostState() }
     Scaffold(
         bottomBar = {
@@ -63,9 +63,7 @@ fun Main(user: User) {
             when (selectedTab) {
                 Tab.Discover -> MiLin(
                     selectedCategory = selectedCategory,
-                    onCategorySelected = { category -> selectedCategory = category },
-                    onCategoryAdded = { /* 在这里处理添加类别的操作 */ },
-                    onCategoryRemoved = { /* 在这里处理删除类别的操作 */ }
+                    onCategorySelected = { category -> selectedCategory = category }
                 )
 
                 Tab.Chat -> Chat(user)

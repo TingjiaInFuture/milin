@@ -4,6 +4,12 @@ package ztj.milin
 
 data class User(var id: Int, var name: String)
 
+
+//置顶
+fun topCategory(category: String) {
+    categories.remove(category)
+    categories.add(0, category)
+}
 // 新建类别
 fun addCategory(category: String) {
     categories.add(category)
