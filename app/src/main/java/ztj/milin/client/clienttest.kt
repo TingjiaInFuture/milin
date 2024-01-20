@@ -112,31 +112,37 @@ class clienttest {
 
 fun main() {
     val clientTest = clienttest()
-    val senderUser = User(id=9,name="User A")
-    val receiverUser = User(id=10,name="User B")
-    val UserC = User(id=10,name="User C")
-    val user1 = User(id=125,name="Usr 51")
-    val message = "Hello, world!"
     runBlocking {
-        val a=clientTest.registerUser(senderUser,"123456")
-        val b=clientTest.registerUser(receiverUser,"123456")
-        clientTest.registerUser(UserC,"123456")
-//        val messages = clientTest.addMessage(senderUser, receiverUser.name, message)
-        println("id: $a")
-        println("id: $b")
-//        println(messages)
-        println(clientTest.loginUser(user1,"123456"))
-        clientTest.registerUser(user1,"123456")
-        println(clientTest.loginUser(user1,"123456"))
+        clientTest.registerUser(User(id=9,name="User A"),"123456")
+        clientTest.registerUser(User(id=10,name="User B"),"123456")
+        clientTest.registerUser(User(id=10,name="User C"),"123456")
+        clientTest.registerUser(User(id=125,name=""),"123456")
     }
-    runBlocking {
-        val messages = clientTest.getMessages(senderUser)
-        messages.forEach { println(it) }
-        val messages1 = clientTest.getMessages(receiverUser)
-        messages1.forEach { println(it) }
-        val messages2 = clientTest.getMessages(UserC)
-        messages2.forEach { println(it) }
-    }
+//    val senderUser = User(id=9,name="User A")
+//    val receiverUser = User(id=10,name="User B")
+//    val UserC = User(id=10,name="User C")
+//    val user1 = User(id=125,name="Usr 51")
+//    val message = "Hello, world!"
+//    runBlocking {
+//        val a=clientTest.registerUser(senderUser,"123456")
+//        val b=clientTest.registerUser(receiverUser,"123456")
+//        clientTest.registerUser(UserC,"123456")
+////        val messages = clientTest.addMessage(senderUser, receiverUser.name, message)
+//        println("id: $a")
+//        println("id: $b")
+////        println(messages)
+//        println(clientTest.loginUser(user1,"123456"))
+//        clientTest.registerUser(user1,"123456")
+//        println(clientTest.loginUser(user1,"123456"))
+//    }
+//    runBlocking {
+//        val messages = clientTest.getMessages(senderUser)
+//        messages.forEach { println(it) }
+//        val messages1 = clientTest.getMessages(receiverUser)
+//        messages1.forEach { println(it) }
+//        val messages2 = clientTest.getMessages(UserC)
+//        messages2.forEach { println(it) }
+//    }
 }
 
 

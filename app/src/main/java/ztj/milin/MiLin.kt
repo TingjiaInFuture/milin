@@ -3,7 +3,9 @@ package ztj.milin
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -16,6 +18,9 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -29,16 +34,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun MiLin(
+    user: User,
     selectedCategory: String,
     onCategorySelected: (String) -> Unit,
 ) {
-    // 用于控制上下文菜单的显示
+    val snackbarHostState = remember { SnackbarHostState() }
     var showContextMenu by remember { mutableStateOf(false) }
     var contextMenuCategory by remember { mutableStateOf("") }
+    var showadd by remember { mutableStateOf("") }
     var i by remember { mutableIntStateOf(0) }
     var addc by remember { mutableStateOf(false) }
     Box(
@@ -54,29 +64,53 @@ fun MiLin(
             ) {
             items(categories.size) { index ->
                 val category = categories[index]
-                // 显示类别，点击时回调
-                Text(
-                    text = category,
-                    color = Color(0xFF056B05),
+                Row(
                     modifier = Modifier
-                        .padding(16.dp)
-                        .combinedClickable(
-                            onClick = {
-                                onCategorySelected(category)
-                            },
-                            onLongClick = {
-                                showContextMenu = true
-                                contextMenuCategory = category
+                        .fillMaxWidth()
+                        .padding(10.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // 显示类别，点击时回调
+                    Text(text = category,
+                        color = Color(0xFF056B05),
+                        modifier = Modifier.combinedClickable(onClick = {
+                            showadd=category
+                            onCategorySelected(category)
+
+                        }, onLongClick = {
+                            showContextMenu = true
+                            contextMenuCategory = category
+                        })
+                    )
+                    if(showadd==category) {
+                        IconButton(onClick = {
+
+                            CoroutineScope(Dispatchers.Main).launch {
+                                if (querySubcategory(selectedCategory, user.id) == null) {
+                                    addSubcategory(selectedCategory, user)
+                                    onCategorySelected("$i")
+                                    i++
+                                } else
+                                    snackbarHostState.showSnackbar("已加入候选")
+                                showadd = ""
                             }
-                        )
-                )
+                        }) {
+                            Icon(
+                                Icons.Default.Add,
+                                contentDescription = "添加子类别",
+                                modifier = Modifier.size(18.dp),
+                                tint = Color(0xFFE78E06)
+                            )
+                        }
+                    }
+                }
 
                 // 如果类别被选中，显示子类
                 if (category == selectedCategory) {
                     subcategories[category]?.forEachIndexed { subcategoryIndex, subcategory ->
                         Text(
-                            text = subcategory,
-                            modifier = Modifier.padding(16.dp)
+                            text = subcategory.name, modifier = Modifier.padding(16.dp)
                         )
                     }
                 }
@@ -85,7 +119,8 @@ fun MiLin(
         if (addc) {
             var newcategory by remember { mutableStateOf("") }
             Dialog(onDismissRequest = {
-                addc = false;addCategory(newcategory)
+                addc = false
+                addCategory(newcategory)
                 onCategorySelected("$i")
                 i++
 
@@ -111,8 +146,7 @@ fun MiLin(
         FloatingActionButton(
             onClick = {
                 addc = true
-            },
-            modifier = Modifier
+            }, modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .size(width = 100.dp, height = 100.dp)
 //                .height(100.dp).width(200.dp)
@@ -124,31 +158,25 @@ fun MiLin(
 
         // 如果需要显示上下文菜单，那么显示它
         if (showContextMenu) {
-            DropdownMenu(
-                expanded = showContextMenu,
-                onDismissRequest = { showContextMenu = false }
-            ) {
-                DropdownMenuItem(
-                    onClick = {
-                        topCategory(contextMenuCategory)
-                        onCategorySelected("$i")
-                        i++
-                        showContextMenu = false
-                    },
-                    text = { Text("置顶") }
-                )
-                DropdownMenuItem(
-                    onClick = {
-                        removeCategory(contextMenuCategory)
-                        onCategorySelected("$i")
-                        i++
-                        showContextMenu = false
-                    },
-                    text = { Text("删除") }
-                )
+            DropdownMenu(expanded = showContextMenu,
+                onDismissRequest = { showContextMenu = false }) {
+                DropdownMenuItem(onClick = {
+                    topCategory(contextMenuCategory)
+                    onCategorySelected("$i")
+                    i++
+                    showContextMenu = false
+                }, text = { Text("置顶") })
+                DropdownMenuItem(onClick = {
+                    removeCategory(contextMenuCategory)
+                    onCategorySelected("$i")
+                    i++
+                    showContextMenu = false
+                }, text = { Text("删除") })
 
 
             }
         }
     }
+    SnackbarHost(hostState = snackbarHostState)
 }
+

@@ -45,12 +45,32 @@ val userList = listOf(
 
 enum class Tab { Discover, Chat }
 
-val categories = arrayListOf("类别1", "类别2", "类别3")
-
-val subcategories = mutableMapOf(
-    "类别1" to arrayListOf("子类别1A", "子类别1B", "子类别1C"),
-    "类别2" to arrayListOf("子类别2A", "子类别2B"),
-    "类别3" to arrayListOf("子类别3A")
-)
+val categories = arrayListOf<String>()
 
 
+
+val subcategories = mutableMapOf<String, ArrayList<User>>()
+
+// 添加一个子类别
+fun addSubcategory(category: String, user: User) {
+    if (subcategories.containsKey(category)) {
+        subcategories[category]?.add(user)
+    } else {
+        subcategories[category] = arrayListOf(user)
+    }
+}
+
+// 删除一个子类别
+fun removeSubcategory(category: String, userId: Int) {
+    subcategories[category]?.removeIf { it.id == userId }
+}
+
+// 修改一个子类别
+fun updateSubcategory(category: String, userId: Int, newName: String) {
+    subcategories[category]?.find { it.id == userId }?.name = newName
+}
+
+// 查询一个子类别
+fun querySubcategory(category: String, userId: Int): User? {
+    return subcategories[category]?.find { it.id == userId }
+}

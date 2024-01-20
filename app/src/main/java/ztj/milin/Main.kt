@@ -62,6 +62,7 @@ fun Main(user: User) {
 
             when (selectedTab) {
                 Tab.Discover -> MiLin(
+                    user= user,
                     selectedCategory = selectedCategory,
                     onCategorySelected = { category -> selectedCategory = category }
                 )
