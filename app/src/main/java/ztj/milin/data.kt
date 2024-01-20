@@ -1,7 +1,8 @@
 package ztj.milin
 
+import ChatApi
 
-
+val chatApi=ChatApi()
 data class User(var id: Int, var name: String)
 
 
@@ -11,8 +12,9 @@ fun topCategory(category: String) {
     categories.add(0, category)
 }
 // 新建类别
-fun addCategory(category: String) {
+suspend fun addCategory(category: String): Boolean {
     categories.add(category)
+    return chatApi.addCategory(category)
 }
 
 // 删除类别
@@ -36,17 +38,31 @@ fun updateCategory(oldCategory: String, newCategory: String) {
 }
 
 
-val userList = listOf(
+val userList = arrayListOf(
     User(1, "User A"),
     User(2, "User B"),
     User(3, "User C"),
     // 添加更多用户
 )
 
+suspend fun addusertolist(user: String):Boolean{
+    val id=chatApi.checkUser(user)
+    return if(id==0){
+        false
+    }
+    else{
+        userList.add(User(id=id,name=user))
+        true
+    }
+}
+
+
 enum class Tab { Discover, Chat }
 
-val categories = arrayListOf<String>()
-
+var categories = mutableListOf<String>()
+suspend fun initCategories() {
+    categories = chatApi.getCategories().toMutableList()
+}
 
 
 val subcategories = mutableMapOf<String, ArrayList<User>>()

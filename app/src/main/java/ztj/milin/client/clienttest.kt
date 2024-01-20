@@ -42,7 +42,7 @@ class clienttest {
         val responseBody = response.bodyAsText()
         println("registerUser response: $responseBody")
         return if (response.status.value == 201) {
-            // 假设响应体中包含用户的 id
+
             json.decodeFromString<Map<String, Int>>(responseBody)["success"] ?: 0
         } else {
             0
@@ -61,7 +61,7 @@ class clienttest {
         val responseBody = response.bodyAsText()
         println("loginUser response: $responseBody")
         return if (response.status.value == 200) {
-            // 假设响应体中包含用户的 id
+
             json.decodeFromString<Map<String, Int>>(responseBody)["userId"] ?: 0
         } else {
             0
@@ -103,20 +103,62 @@ class clienttest {
     }
 
 
+    suspend fun checkUser(username: String): Int {
+        val response: HttpResponse = client.get("https://server-tni-serverllication-jlocxabspm.cn-hangzhou.fcapp.run/checkUsername") {
+            parameter("username", username)
+        }
+        val responseBody = response.bodyAsText()
+        println("checkUser response: $responseBody")
+        val json = Json { ignoreUnknownKeys = true }
+        return if (response.status.value == 200) {
+            json.decodeFromString<Map<String, Int>>(responseBody)["userId"] ?: 0
+        } else {
+            0
+        }
+    }
+
+    suspend fun getCategories(): List<String> {
+        val response: HttpResponse = client.get("https://server-tni-serverllication-jlocxabspm.cn-hangzhou.fcapp.run/categories")
+        val responseBody = response.bodyAsText()
+        println("getCategories response: $responseBody")
+        val json = Json { ignoreUnknownKeys = true }
+        return if (response.status.value == 200) {
+
+            json.decodeFromString<List<String>>(responseBody)
+        } else {
+            emptyList()
+        }
+    }
+
+    @OptIn(InternalAPI::class)
+    suspend fun addCategory(category: String): Boolean {
+        val json = Json { ignoreUnknownKeys = true }
+        val jsonString = json.encodeToString(mapOf("category" to category))
+        val response: HttpResponse = client.post("https://server-tni-serverllication-jlocxabspm.cn-hangzhou.fcapp.run/categories") {
+            body = TextContent(jsonString, ContentType.Application.Json)
+        }
+        val responseBody = response.bodyAsText()
+        println("addCategory response: $responseBody")
+        return response.status.value == 201
+    }
 
 
-
-    // ... 其他函数
 }
 
 
 fun main() {
     val clientTest = clienttest()
     runBlocking {
-        clientTest.registerUser(User(id=9,name="User A"),"123456")
-        clientTest.registerUser(User(id=10,name="User B"),"123456")
-        clientTest.registerUser(User(id=10,name="User C"),"123456")
-        clientTest.registerUser(User(id=125,name=""),"123456")
+        clientTest.registerUser(User(id=1,name="User A"),"123456")
+//        clientTest.checkUser("User B")
+        clientTest.registerUser(User(id=2,name="User B"),"123456")
+//        clientTest.checkUser("User B")
+        clientTest.registerUser(User(id=3,name="User C"),"123456")
+        clientTest.registerUser(User(id=4,name="网络用户A"),"123456")
+        clientTest.registerUser(User(id=5,name=""),"")
+        clientTest.addCategory("示例1")
+        clientTest.getCategories()
+        clientTest.addCategory("示例2")
     }
 //    val senderUser = User(id=9,name="User A")
 //    val receiverUser = User(id=10,name="User B")
