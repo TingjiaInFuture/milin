@@ -1,7 +1,8 @@
 package ztj.milin.client
 
-import kotlinx.serialization.*
-import kotlinx.serialization.json.*
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 @Serializable
 data class MessageRequest1(val user: String?, val message: String)

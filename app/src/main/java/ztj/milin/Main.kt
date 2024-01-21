@@ -58,17 +58,17 @@ fun Main(user: User) {
         content = { paddingValues ->
             Box(
                 modifier = Modifier.padding(paddingValues)
-            ){
+            ) {
 
-            when (selectedTab) {
-                Tab.Discover -> MiLin(
-                    user= user,
-                    selectedCategory = selectedCategory,
-                    onCategorySelected = { category -> selectedCategory = category }
-                )
+                when (selectedTab) {
+                    Tab.Discover -> MiLin(
+                        user = user,
+                        selectedCategory = selectedCategory,
+                        onCategorySelected = { category -> selectedCategory = category }
+                    )
 
-                Tab.Chat -> Chat(user)
-            }
+                    Tab.Chat -> Chat(user)
+                }
 
 //            SnackbarHost(
 //                hostState = snackbarHostState,

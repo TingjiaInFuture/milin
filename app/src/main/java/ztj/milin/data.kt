@@ -2,7 +2,8 @@ package ztj.milin
 
 import ChatApi
 
-val chatApi=ChatApi()
+val chatApi = ChatApi()
+
 data class User(var id: Int, var name: String)
 
 
@@ -11,10 +12,17 @@ fun topCategory(category: String) {
     categories.remove(category)
     categories.add(0, category)
 }
+
 // 新建类别
 suspend fun addCategory(category: String): Boolean {
-    categories.add(category)
-    return chatApi.addCategory(category)
+    if (categories.contains(category)) {
+        return false
+    }
+    if (chatApi.addCategory(category)) {
+        categories.add(category)
+        return true
+    }
+    return false
 }
 
 // 删除类别
@@ -45,13 +53,12 @@ val userList = arrayListOf(
     // 添加更多用户
 )
 
-suspend fun addusertolist(user: String):Boolean{
-    val id=chatApi.checkUser(user)
-    return if(id==0){
+suspend fun addusertolist(user: String): Boolean {
+    val id = chatApi.checkUser(user)
+    return if (id == 0) {
         false
-    }
-    else{
-        userList.add(User(id=id,name=user))
+    } else {
+        userList.add(User(id = id, name = user))
         true
     }
 }

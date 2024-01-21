@@ -11,9 +11,6 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import ztj.milin.client.main
 import ztj.milin.ui.theme.MilinTheme
 
@@ -28,7 +25,11 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             var userId by remember { mutableIntStateOf(sharedPreferences.getInt("userId", 0)) }
-            var username by remember { mutableStateOf(sharedPreferences.getString("username","NaN")?:"NaN" ) }//强制类型安全
+            var username by remember {
+                mutableStateOf(
+                    sharedPreferences.getString("username", "NaN") ?: "NaN"
+                )
+            }//强制类型安全
 
             LaunchedEffect(Unit) {
                 // 检查用户是否存在

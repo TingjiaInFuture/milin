@@ -76,10 +76,11 @@ fun MiLin(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     // 显示类别，点击时回调
-                    Text(text = category,
+                    Text(
+                        text = category,
                         color = Color(0xFF056B05),
                         modifier = Modifier.combinedClickable(onClick = {
-                            showadd=category
+                            showadd = category
                             onCategorySelected(category)
 
                         }, onLongClick = {
@@ -87,7 +88,7 @@ fun MiLin(
                             contextMenuCategory = category
                         })
                     )
-                    if(showadd==category) {
+                    if (showadd == category) {
                         IconButton(onClick = {
 
                             CoroutineScope(Dispatchers.Main).launch {
@@ -125,8 +126,8 @@ fun MiLin(
             Dialog(onDismissRequest = {
                 CoroutineScope(Dispatchers.Main).launch {
                     addc = false
-                    if(!addCategory(newcategory))
-                        snackbarHostState.showSnackbar("服务器错误")
+                    if (!addCategory(newcategory))
+                        snackbarHostState.showSnackbar("类别已存在或服务器错误")
                     onCategorySelected("$i")
                     i++
                 }

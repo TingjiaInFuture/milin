@@ -8,19 +8,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -36,7 +32,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -57,7 +52,8 @@ fun Chat(user: User) {
             .background(Color(0xFFADD8E6))
     )
     {
-        UserList(cuser = user,
+        UserList(
+            cuser = user,
             suser = selectedUser, users = userList,
             onUserSelected = { user ->
                 selectedUser = user
@@ -68,7 +64,7 @@ fun Chat(user: User) {
             Dialog(onDismissRequest = {
                 CoroutineScope(Dispatchers.Main).launch {
 
-                    if(!addusertolist(newuser))
+                    if (!addusertolist(newuser))
                         snackbarHostState.showSnackbar("用户不存在~")
                     addc = false
                 }
@@ -111,7 +107,7 @@ fun Chat(user: User) {
 }
 
 @Composable
-fun UserList(cuser:User,suser: User?, users: List<User>, onUserSelected: (User) -> Unit) {
+fun UserList(cuser: User, suser: User?, users: List<User>, onUserSelected: (User) -> Unit) {
     Column(
         modifier = Modifier
             .background(Color(0xFFADD8E6))
@@ -127,7 +123,7 @@ fun UserList(cuser:User,suser: User?, users: List<User>, onUserSelected: (User) 
                     }
             )
             if (user == suser) {
-                Conversation(cuser=cuser,suser = user)
+                Conversation(cuser = cuser, suser = user)
             }
         }
     }
@@ -135,7 +131,7 @@ fun UserList(cuser:User,suser: User?, users: List<User>, onUserSelected: (User) 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Conversation(cuser:User,suser: User) {
+fun Conversation(cuser: User, suser: User) {
     val chatApi = ChatApi()
 
     var conversation by remember { mutableStateOf(listOf<String>()) }
@@ -144,13 +140,14 @@ fun Conversation(cuser:User,suser: User) {
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    LaunchedEffect(cuser,suser) {
+    LaunchedEffect(cuser, suser) {
         scope.launch {
             try {
                 val messages = chatApi.getMessages(suser)
                 if (messages.isNotEmpty()) {
-                    conversation = messages.filter { (it.sender == cuser.name || it.sender == suser.name) && (it.receiver == cuser.name || it.receiver == suser.name) }
-                        .map { "${it.sender}: ${it.message}" }
+                    conversation =
+                        messages.filter { (it.sender == cuser.name || it.sender == suser.name) && (it.receiver == cuser.name || it.receiver == suser.name) }
+                            .map { "${it.sender}: ${it.message}" }
                 }
 
 

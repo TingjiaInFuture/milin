@@ -21,7 +21,7 @@ import ztj.milin.User
 
 class clienttest {
 
-    private val client = HttpClient(CIO){
+    private val client = HttpClient(CIO) {
         engine {
             requestTimeout = 10000 // 0 to disable, or a millisecond value to fit your needs
         }
@@ -34,11 +34,12 @@ class clienttest {
     @OptIn(InternalAPI::class)
     suspend fun registerUser(user: User, password: String): Int {
         val json = Json { ignoreUnknownKeys = true }
-        val userRegistration = UserRegistration(username=user.name, password=password)
+        val userRegistration = UserRegistration(username = user.name, password = password)
         val jsonString = json.encodeToString(userRegistration)
-        val response: HttpResponse = client.post("https://server-tni-serverllication-jlocxabspm.cn-hangzhou.fcapp.run/register") {
-            body = TextContent(jsonString, ContentType.Application.Json)
-        }
+        val response: HttpResponse =
+            client.post("https://server-tni-serverllication-jlocxabspm.cn-hangzhou.fcapp.run/register") {
+                body = TextContent(jsonString, ContentType.Application.Json)
+            }
         val responseBody = response.bodyAsText()
         println("registerUser response: $responseBody")
         return if (response.status.value == 201) {
@@ -53,11 +54,12 @@ class clienttest {
     @OptIn(InternalAPI::class)
     suspend fun loginUser(user: User, password: String): Int {
         val json = Json { ignoreUnknownKeys = true }
-        val userLogin = UserRegistration(username=user.name, password=password)
+        val userLogin = UserRegistration(username = user.name, password = password)
         val jsonString = json.encodeToString(userLogin)
-        val response: HttpResponse = client.post("https://server-tni-serverllication-jlocxabspm.cn-hangzhou.fcapp.run/login") {
-            body = TextContent(jsonString, ContentType.Application.Json)
-        }
+        val response: HttpResponse =
+            client.post("https://server-tni-serverllication-jlocxabspm.cn-hangzhou.fcapp.run/login") {
+                body = TextContent(jsonString, ContentType.Application.Json)
+            }
         val responseBody = response.bodyAsText()
         println("loginUser response: $responseBody")
         return if (response.status.value == 200) {
@@ -69,11 +71,11 @@ class clienttest {
     }
 
 
-
     suspend fun getMessages(user: User): List<Message> {
-        val response: HttpResponse = client.get("https://server-tni-serverllication-jlocxabspm.cn-hangzhou.fcapp.run/messages") {
-            parameter("username", user.name)
-        }
+        val response: HttpResponse =
+            client.get("https://server-tni-serverllication-jlocxabspm.cn-hangzhou.fcapp.run/messages") {
+                parameter("username", user.name)
+            }
         val responseBody = response.bodyAsText()
         println("getMessages response: $responseBody")
         val json = Json { ignoreUnknownKeys = true }
@@ -86,17 +88,19 @@ class clienttest {
     }
 
 
-
-
-
     @OptIn(InternalAPI::class)
     suspend fun addMessage(senderUser: User, receiverUsername: String, message: String): Boolean {
         val json = Json { ignoreUnknownKeys = true }
-        val mess = MessageRequest(message=message, senderUsername=senderUser.name, receiverUsername=receiverUsername)
+        val mess = MessageRequest(
+            message = message,
+            senderUsername = senderUser.name,
+            receiverUsername = receiverUsername
+        )
         val jsonString = json.encodeToString(mess)
-        val response: HttpResponse = client.post("https://server-tni-serverllication-jlocxabspm.cn-hangzhou.fcapp.run/message") {
-            body = TextContent(jsonString, ContentType.Application.Json)
-        }
+        val response: HttpResponse =
+            client.post("https://server-tni-serverllication-jlocxabspm.cn-hangzhou.fcapp.run/message") {
+                body = TextContent(jsonString, ContentType.Application.Json)
+            }
         val responseBody = response.bodyAsText()
         println("addMessage response: $responseBody")
         return response.status.value == 201
@@ -104,9 +108,10 @@ class clienttest {
 
 
     suspend fun checkUser(username: String): Int {
-        val response: HttpResponse = client.get("https://server-tni-serverllication-jlocxabspm.cn-hangzhou.fcapp.run/checkUsername") {
-            parameter("username", username)
-        }
+        val response: HttpResponse =
+            client.get("https://server-tni-serverllication-jlocxabspm.cn-hangzhou.fcapp.run/checkUsername") {
+                parameter("username", username)
+            }
         val responseBody = response.bodyAsText()
         println("checkUser response: $responseBody")
         val json = Json { ignoreUnknownKeys = true }
@@ -118,7 +123,8 @@ class clienttest {
     }
 
     suspend fun getCategories(): List<String> {
-        val response: HttpResponse = client.get("https://server-tni-serverllication-jlocxabspm.cn-hangzhou.fcapp.run/categories")
+        val response: HttpResponse =
+            client.get("https://server-tni-serverllication-jlocxabspm.cn-hangzhou.fcapp.run/categories")
         val responseBody = response.bodyAsText()
         println("getCategories response: $responseBody")
         val json = Json { ignoreUnknownKeys = true }
@@ -134,9 +140,10 @@ class clienttest {
     suspend fun addCategory(category: String): Boolean {
         val json = Json { ignoreUnknownKeys = true }
         val jsonString = json.encodeToString(mapOf("category" to category))
-        val response: HttpResponse = client.post("https://server-tni-serverllication-jlocxabspm.cn-hangzhou.fcapp.run/categories") {
-            body = TextContent(jsonString, ContentType.Application.Json)
-        }
+        val response: HttpResponse =
+            client.post("https://server-tni-serverllication-jlocxabspm.cn-hangzhou.fcapp.run/categories") {
+                body = TextContent(jsonString, ContentType.Application.Json)
+            }
         val responseBody = response.bodyAsText()
         println("addCategory response: $responseBody")
         return response.status.value == 201
@@ -149,16 +156,16 @@ class clienttest {
 fun main() {
     val clientTest = clienttest()
     runBlocking {
-        clientTest.registerUser(User(id=1,name="User A"),"123456")
+        clientTest.registerUser(User(id = 1, name = "User A"), "123456")
 //        clientTest.checkUser("User B")
-        clientTest.registerUser(User(id=2,name="User B"),"123456")
+        clientTest.registerUser(User(id = 2, name = "User B"), "123456")
 //        clientTest.checkUser("User B")
-        clientTest.registerUser(User(id=3,name="User C"),"123456")
-        clientTest.registerUser(User(id=4,name="网络用户A"),"123456")
-        clientTest.registerUser(User(id=5,name=""),"")
-        clientTest.addCategory("示例1")
+        clientTest.registerUser(User(id = 3, name = "User C"), "123456")
+        clientTest.registerUser(User(id = 4, name = "网络用户A"), "123456")
+
+//        clientTest.addCategory("示例1")
         clientTest.getCategories()
-        clientTest.addCategory("示例2")
+//        clientTest.addCategory("示例2")
     }
 //    val senderUser = User(id=9,name="User A")
 //    val receiverUser = User(id=10,name="User B")
@@ -199,4 +206,8 @@ data class UserRegistration(val username: String, val password: String)
 data class Message(val id: Int, val sender: String?, val receiver: String?, val message: String)
 
 @Serializable
-data class MessageRequest(val message: String, val senderUsername: String, val receiverUsername: String)
+data class MessageRequest(
+    val message: String,
+    val senderUsername: String,
+    val receiverUsername: String
+)

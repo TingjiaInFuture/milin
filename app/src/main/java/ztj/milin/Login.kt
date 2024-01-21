@@ -10,8 +10,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -34,10 +36,10 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Login(user: User, onLoginSuccess: (id:Int,name: String) -> Unit) {
+fun Login(user: User, onLoginSuccess: (id: Int, name: String) -> Unit) {
     val systemUiController = rememberSystemUiController()
     SideEffect {
-        // 设置状态栏为透明，并根据主题颜色设置状态栏图标颜色
+        // 设置状态栏颜色
         systemUiController.setSystemBarsColor(
             color = Color(0xFFADD8E6)
         )
@@ -71,7 +73,7 @@ fun Login(user: User, onLoginSuccess: (id:Int,name: String) -> Unit) {
             ) {
                 TextField(
                     value = username,
-                    onValueChange = { username = it ;user.name = it},
+                    onValueChange = { username = it;user.name = it },
                     label = { Text("用户名") },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -92,27 +94,37 @@ fun Login(user: User, onLoginSuccess: (id:Int,name: String) -> Unit) {
                         .padding(8.dp),
                     horizontalArrangement = Arrangement.Start
                 ) {
+                    var isLoading by remember { mutableStateOf(false) }
+
                     Button(
                         onClick = {
-                            // 在这里执行登录逻辑
+                            isLoading = true
                             CoroutineScope(Dispatchers.Main).launch {
                                 val success = chatApi.loginUser(user, password)
-                                // 验证用户名和密码，然后根据结果采取操作
-                                if (success!=0) {
+                                if (success != 0) {
                                     // 登录成功
                                     user.id = success
-                                    onLoginSuccess(user.id,username)
+                                    onLoginSuccess(user.id, username)
+                                    snackbarHostState.showSnackbar("登录成功")
                                 } else {
-                                    // 登录失败，可以显示错误消息
+                                    // 登录失败
                                     snackbarHostState.showSnackbar("用户名或密码错误")
                                 }
+                                isLoading = false
                             }
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth(0.5f) // 使用屏幕宽度的 40%
+                        }, modifier = Modifier
+                            .fillMaxWidth(0.5f) // 使用剩余宽度的 50%
                             .padding(8.dp)
                     ) {
-                        Text("登录")
+                        if (isLoading) {
+                            CircularProgressIndicator(
+                                color = Color(0xFF02B803),
+                                strokeWidth = 2.dp,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        } else {
+                            Text("登录")
+                        }
                     }
 
                     Spacer(modifier = Modifier.width(10.dp)) // 在两个按钮之间添加一些间距
@@ -123,18 +135,22 @@ fun Login(user: User, onLoginSuccess: (id:Int,name: String) -> Unit) {
                             CoroutineScope(Dispatchers.Main).launch {
                                 val success = chatApi.registerUser(user, password)
 
-                                if (success!=0) {
+                                if (success > 0) {
                                     // 注册成功
                                     user.id = success
-                                    onLoginSuccess(user.id,username)
+                                    onLoginSuccess(user.id, username)
                                 } else {
-                                    // 注册失败，可以显示错误消息
-                                    snackbarHostState.showSnackbar("用户名已存在")
+                                    // 注册失败
+                                    val s = when (success) {
+                                        -1 -> "用户名不能为空"
+                                        -2 -> "密码不能为空"
+                                        else -> "用户名已存在"
+                                    }
+                                    snackbarHostState.showSnackbar(s)
                                 }
                             }
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth(0.8f) // 使用屏幕宽度的 40%
+                        }, modifier = Modifier
+                            .fillMaxWidth(0.8f) // 使用剩余宽度的 80%
                             .padding(8.dp)
                     ) {
                         Text("注册")
