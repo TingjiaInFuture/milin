@@ -48,6 +48,10 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
+            LaunchedEffect(key1 = true) {
+                initCategories()
+                initSubcategories()
+            }
             MilinTheme {
 
                 if (userId != 0)

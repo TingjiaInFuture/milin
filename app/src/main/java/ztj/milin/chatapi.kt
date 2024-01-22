@@ -81,7 +81,6 @@ class ChatApi {
                 parameter("username", username)
             }
         val responseBody = response.bodyAsText()
-        println("checkUser response: $responseBody")
         val json = Json { ignoreUnknownKeys = true }
         return if (response.status.value == 200) {
             json.decodeFromString<Map<String, Int>>(responseBody)["userId"] ?: 0
@@ -144,6 +143,35 @@ class ChatApi {
             client.post("https://server-tni-serverllication-jlocxabspm.cn-hangzhou.fcapp.run/categories") {
                 body = TextContent(jsonString, ContentType.Application.Json)
             }
+        return response.status.value == 201
+    }
+
+
+    // 获取给定主类的子类
+    suspend fun getSubcategories(category: String): List<String> {
+        val response: HttpResponse =
+            client.get("https://server-tni-serverllication-jlocxabspm.cn-hangzhou.fcapp.run/subcategories") {
+                parameter("category", category)
+            }
+        val responseBody = response.bodyAsText()
+        val json = Json { ignoreUnknownKeys = true }
+        return if (response.status.value == 200) {
+            json.decodeFromString<List<String>>(responseBody)
+        } else {
+            emptyList()
+        }
+    }
+
+    // 添加新的子类
+    @OptIn(InternalAPI::class)
+    suspend fun addSubcategory(category: String, user: String): Boolean {
+        val json = Json { ignoreUnknownKeys = true }
+        val jsonString = json.encodeToString(mapOf("category" to category, "user" to user))
+        val response: HttpResponse =
+            client.post("https://server-tni-serverllication-jlocxabspm.cn-hangzhou.fcapp.run/subcategories") {
+                body = TextContent(jsonString, ContentType.Application.Json)
+            }
+
         return response.status.value == 201
     }
 

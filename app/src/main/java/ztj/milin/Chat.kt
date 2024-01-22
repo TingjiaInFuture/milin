@@ -43,6 +43,22 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Chat(user: User) {
+
+    LaunchedEffect(Unit) {
+        val messages = chatApi.getMessages(user)
+        val senders = messages.map { it.sender }.distinct()
+        val userNames = userList.map { it.name }
+        val newUsers = senders.filter { it !in userNames && it != user.name }
+        val news: List<String> = newUsers.filterNotNull()
+        val nuList = news.map { username ->
+            val id = chatApi.checkUser(username)
+            User(id, username)
+        }
+        newuserList.addAll(nuList)
+    }
+
+
+    var shownewuser by remember { mutableStateOf(false) }
     var selectedUser: User? by remember { mutableStateOf(null) }
     var addc by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
@@ -52,13 +68,34 @@ fun Chat(user: User) {
             .background(Color(0xFFADD8E6))
     )
     {
+        var userlist = userList
+        if (shownewuser) {
+            userlist = newuserList
+        }
+
+
+
         UserList(
             cuser = user,
-            suser = selectedUser, users = userList,
+            suser = selectedUser, users = userlist,
             onUserSelected = { user ->
                 selectedUser = user
             },
         )
+
+        Button(
+            onClick = {
+                shownewuser = !shownewuser
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+        ) {
+            Text("好友申请")
+        }
+
+
+
         if (addc) {
             var newuser by remember { mutableStateOf("") }
             Dialog(onDismissRequest = {
@@ -112,6 +149,7 @@ fun UserList(cuser: User, suser: User?, users: List<User>, onUserSelected: (User
         modifier = Modifier
             .background(Color(0xFFADD8E6))
     ) {
+
         for (user in users) {
             Text(
                 text = user.name,
@@ -145,7 +183,10 @@ fun Conversation(cuser: User, suser: User) {
             try {
                 val messages = chatApi.getMessages(suser)
                 if (messages.isNotEmpty()) {
-                    conversation =
+
+                    conversation = if (suser.id <= 3)
+                        messages.map { "${it.sender}: ${it.message}" }
+                    else
                         messages.filter { (it.sender == cuser.name || it.sender == suser.name) && (it.receiver == cuser.name || it.receiver == suser.name) }
                             .map { "${it.sender}: ${it.message}" }
                 }
@@ -217,5 +258,4 @@ fun Conversation(cuser: User, suser: User) {
     // 显示 Snackbar
     SnackbarHost(hostState = snackbarHostState)
 }
-
 

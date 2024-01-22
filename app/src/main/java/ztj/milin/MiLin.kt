@@ -24,7 +24,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -46,9 +45,7 @@ fun MiLin(
     selectedCategory: String,
     onCategorySelected: (String) -> Unit,
 ) {
-    LaunchedEffect(key1 = true) {
-        initCategories()
-    }
+
     val snackbarHostState = remember { SnackbarHostState() }
     var showContextMenu by remember { mutableStateOf(false) }
     var contextMenuCategory by remember { mutableStateOf("") }

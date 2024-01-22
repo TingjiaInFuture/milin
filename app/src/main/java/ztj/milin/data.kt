@@ -47,11 +47,13 @@ fun updateCategory(oldCategory: String, newCategory: String) {
 
 
 val userList = arrayListOf(
-    User(1, "User A"),
-    User(2, "User B"),
-    User(3, "User C"),
+    User(1, "群聊1"),
+    User(2, "群聊2"),
+    User(3, "群聊3"),
     // 添加更多用户
 )
+
+val newuserList = ArrayList<User>()
 
 suspend fun addusertolist(user: String): Boolean {
     val id = chatApi.checkUser(user)
@@ -74,13 +76,30 @@ suspend fun initCategories() {
 
 val subcategories = mutableMapOf<String, ArrayList<User>>()
 
-// 添加一个子类别
-fun addSubcategory(category: String, user: User) {
-    if (subcategories.containsKey(category)) {
-        subcategories[category]?.add(user)
-    } else {
-        subcategories[category] = arrayListOf(user)
+suspend fun initSubcategories() {
+    for (category in categories) {
+        val subcategoryNames = chatApi.getSubcategories(category)
+        val subcategoryUsers = subcategoryNames.mapNotNull { name ->
+            val userId = chatApi.checkUser(name)
+            if (userId != 0) User(id = userId, name = name) else null
+        }
+        subcategories[category] = ArrayList(subcategoryUsers)
     }
+}
+
+
+// 添加一个子类别
+suspend fun addSubcategory(category: String, user: User): Boolean {
+    if (chatApi.addSubcategory(category, user.name)) {
+
+        if (subcategories.containsKey(category)) {
+            subcategories[category]?.add(user)
+        } else {
+            subcategories[category] = arrayListOf(user)
+        }
+        return true
+    }
+    return false
 }
 
 // 删除一个子类别

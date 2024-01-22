@@ -150,21 +150,55 @@ class clienttest {
     }
 
 
+    // 获取给定主类的子类
+    suspend fun getSubcategories(category: String): List<String> {
+        val response: HttpResponse =
+            client.get("https://server-tni-serverllication-jlocxabspm.cn-hangzhou.fcapp.run/subcategories") {
+                parameter("category", category)
+            }
+        val responseBody = response.bodyAsText()
+        println("getSubcategories response: $responseBody")
+        val json = Json { ignoreUnknownKeys = true }
+        return if (response.status.value == 200) {
+            json.decodeFromString<List<String>>(responseBody)
+        } else {
+            emptyList()
+        }
+    }
+
+    // 添加新的子类
+    @OptIn(InternalAPI::class)
+    suspend fun addSubcategory(category: String, user: String): Boolean {
+        val json = Json { ignoreUnknownKeys = true }
+        val jsonString = json.encodeToString(mapOf("category" to category, "user" to user))
+        val response: HttpResponse =
+            client.post("https://server-tni-serverllication-jlocxabspm.cn-hangzhou.fcapp.run/subcategories") {
+                body = TextContent(jsonString, ContentType.Application.Json)
+            }
+        val responseBody = response.bodyAsText()
+        println("addSubcategory response: $responseBody")
+        return response.status.value == 201
+    }
+
+
 }
 
 
 fun main() {
     val clientTest = clienttest()
     runBlocking {
-        clientTest.registerUser(User(id = 1, name = "User A"), "123456")
+        clientTest.registerUser(User(id = 1, name = "群聊1"), "123456")
 //        clientTest.checkUser("User B")
-        clientTest.registerUser(User(id = 2, name = "User B"), "123456")
+        clientTest.registerUser(User(id = 2, name = "群聊2"), "123456")
 //        clientTest.checkUser("User B")
-        clientTest.registerUser(User(id = 3, name = "User C"), "123456")
+        clientTest.registerUser(User(id = 3, name = "群聊3"), "123456")
         clientTest.registerUser(User(id = 4, name = "网络用户A"), "123456")
 
 //        clientTest.addCategory("示例1")
-        clientTest.getCategories()
+//        clientTest.getCategories()
+//        clientTest.addSubcategory("示例1","网络用户A")
+//        clientTest.addSubcategory("示例1","B")
+//        clientTest.getSubcategories("示例1")
 //        clientTest.addCategory("示例2")
     }
 //    val senderUser = User(id=9,name="User A")
