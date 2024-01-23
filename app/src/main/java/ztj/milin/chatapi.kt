@@ -1,6 +1,7 @@
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.defaultRequest
+import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
@@ -146,6 +147,17 @@ class ChatApi {
         return response.status.value == 201
     }
 
+    @OptIn(InternalAPI::class)
+    suspend fun deleteCategory(category: String): Boolean {
+        val json = Json { ignoreUnknownKeys = true }
+        val jsonString = json.encodeToString(mapOf("category" to category))
+        val response: HttpResponse =
+            client.delete("https://server-tni-serverllication-jlocxabspm.cn-hangzhou.fcapp.run/categories") {
+                body = TextContent(jsonString, ContentType.Application.Json)
+            }
+        return response.status.value == 200
+    }
+
 
     // 获取给定主类的子类
     suspend fun getSubcategories(category: String): List<String> {
@@ -173,6 +185,17 @@ class ChatApi {
             }
 
         return response.status.value == 201
+    }
+
+    @OptIn(InternalAPI::class)
+    suspend fun deleteSubcategory(category: String, user: String): Boolean {
+        val json = Json { ignoreUnknownKeys = true }
+        val jsonString = json.encodeToString(mapOf("category" to category, "user" to user))
+        val response: HttpResponse =
+            client.delete("https://server-tni-serverllication-jlocxabspm.cn-hangzhou.fcapp.run/subcategories") {
+                body = TextContent(jsonString, ContentType.Application.Json)
+            }
+        return response.status.value == 200
     }
 
 

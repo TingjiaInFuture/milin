@@ -26,9 +26,20 @@ suspend fun addCategory(category: String): Boolean {
 }
 
 // 删除类别
-fun removeCategory(category: String) {
-    categories.remove(category)
-    subcategories.remove(category) // 同时删除子类别
+suspend fun removeCategory(category: String): Boolean {
+    if (!categories.contains(category)) {
+        return false
+    }
+    if (chatApi.deleteCategory(category)) {
+        categories.remove(category)
+        if (deleteAllSubcategories(category)) {
+            subcategories.remove(category)
+            return true
+        }
+    }
+    return false
+
+
 }
 
 // 更新类别
@@ -103,8 +114,12 @@ suspend fun addSubcategory(category: String, user: User): Boolean {
 }
 
 // 删除一个子类别
-fun removeSubcategory(category: String, userId: Int) {
-    subcategories[category]?.removeIf { it.id == userId }
+suspend fun removeSubcategory(category: String, user: String): Boolean {
+    if (chatApi.deleteSubcategory(category, user)) {
+        subcategories[category]?.removeIf { it.name == user }
+        return true
+    }
+    return false
 }
 
 // 修改一个子类别
@@ -115,4 +130,20 @@ fun updateSubcategory(category: String, userId: Int, newName: String) {
 // 查询一个子类别
 fun querySubcategory(category: String, userId: Int): User? {
     return subcategories[category]?.find { it.id == userId }
+}
+
+suspend fun deleteAllSubcategories(category: String): Boolean {
+    // 首先获取该类下的所有子类
+    val subcategories = subcategories[category] ?: return true
+    var success = true
+
+    // 遍历这些子类并逐个删除
+    for (user in subcategories) {
+        val result = chatApi.deleteSubcategory(category, user.name)
+        if (!result) {
+            success = false
+        }
+    }
+
+    return success
 }

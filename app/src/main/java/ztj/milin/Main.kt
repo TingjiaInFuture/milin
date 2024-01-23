@@ -2,6 +2,7 @@ package ztj.milin
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
@@ -14,31 +15,33 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Main(user: User) {
-    val systemUiController = rememberSystemUiController()
-    SideEffect {
-        // 设置状态栏颜色
-        systemUiController.setSystemBarsColor(
-            color = Color(0xFFADD8E6)
-        )
-    }
+//    val systemUiController = rememberSystemUiController()
+//    SideEffect {
+//        systemUiController.isStatusBarVisible = false
+////        // 设置状态栏颜色
+////        systemUiController.setSystemBarsColor(
+////            color = Color(0xFFADD8E6)
+////        )
+//    }
 
     var selectedTab by remember { mutableStateOf(Tab.Discover) }
     var selectedCategory by remember { mutableStateOf("") }//状态提升
     val snackbarHostState = remember { SnackbarHostState() }
     Scaffold(
+        modifier = Modifier
+            .fillMaxSize(),
+
+
         bottomBar = {
             NavigationBar {
                 NavigationBarItem(

@@ -17,6 +17,10 @@ import ztj.milin.ui.theme.MilinTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+//        WindowCompat.setDecorFitsSystemWindows(window, false)//状态栏没必要隐藏
+
+
         //预备工作
         main()
 

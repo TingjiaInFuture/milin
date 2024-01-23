@@ -65,7 +65,7 @@ fun Chat(user: User) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFADD8E6))
+
     )
     {
         var userlist = userList
@@ -89,9 +89,9 @@ fun Chat(user: User) {
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp)
+                .padding(60.dp)
         ) {
-            Text("好友申请")
+            Text("好友申请列表")
         }
 
 
@@ -114,7 +114,7 @@ fun Chat(user: User) {
                     TextField(
                         value = newuser,
                         onValueChange = { newuser = it },
-                        label = { Text("添加联系人：") },
+                        label = { Text("搜索联系人：") },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(8.dp)
@@ -128,7 +128,7 @@ fun Chat(user: User) {
             onClick = {
                 addc = true
             },
-            containerColor = Color.Yellow,
+            containerColor = Color(0xFF53A2F3),
             contentColor = Color.Blue,
 
             modifier = Modifier
@@ -147,7 +147,7 @@ fun Chat(user: User) {
 fun UserList(cuser: User, suser: User?, users: List<User>, onUserSelected: (User) -> Unit) {
     Column(
         modifier = Modifier
-            .background(Color(0xFFADD8E6))
+
     ) {
 
         for (user in users) {
@@ -202,10 +202,10 @@ fun Conversation(cuser: User, suser: User) {
     LazyColumn(modifier = Modifier.background(Color.Transparent)) {
         itemsIndexed(conversation) { index, m ->
             Text(
-                text = AnnotatedString(m), // Replace "Your Text Here" with the actual text
+                text = AnnotatedString(m),
                 modifier = Modifier.fillMaxWidth(),
-                color = Color.Yellow, // Set the desired text color
-                fontSize = 16.sp, // Set the font size
+//                color = Color.Yellow,
+                fontSize = 16.sp,
                 // Add other styling and parameters as needed
             )
         }

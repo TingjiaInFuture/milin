@@ -1,7 +1,6 @@
 package ztj.milin
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -55,14 +55,11 @@ fun MiLin(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFADD8E6))
     ) {
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color(0xFFADD8E6)),
-
-            ) {
+        ) {
             items(categories.size) { index ->
                 val category = categories[index]
                 Row(
@@ -75,7 +72,7 @@ fun MiLin(
                     // 显示类别，点击时回调
                     Text(
                         text = category,
-                        color = Color(0xFF056B05),
+//                        color = Color(0xFF056B05),
                         modifier = Modifier.combinedClickable(onClick = {
                             showadd = category
                             onCategorySelected(category)
@@ -93,17 +90,31 @@ fun MiLin(
                                     addSubcategory(selectedCategory, user)
                                     onCategorySelected("$i")
                                     i++
-                                } else
-                                    snackbarHostState.showSnackbar("已加入候选")
+                                } else {
+                                    if (!removeSubcategory(selectedCategory, user.name))
+                                        snackbarHostState.showSnackbar("删除失败：服务器错误")
+                                    onCategorySelected("$i")
+                                    i++
+                                }
+
                                 showadd = ""
                             }
                         }) {
-                            Icon(
-                                Icons.Default.Add,
-                                contentDescription = "添加子类别",
-                                modifier = Modifier.size(18.dp),
-                                tint = Color(0xFFE78E06)
-                            )
+                            if (querySubcategory(selectedCategory, user.id) == null) {
+                                Icon(
+                                    Icons.Default.Add,
+                                    contentDescription = "加入候选",
+                                    modifier = Modifier.size(18.dp),
+                                    tint = Color(0xFFE78E06)
+                                )
+                            } else {
+                                Icon(
+                                    Icons.Default.Clear,
+                                    contentDescription = "退出候选",
+                                    modifier = Modifier.size(18.dp),
+                                    tint = Color(0xFFE78E06)
+                                )
+                            }
                         }
                     }
                 }
@@ -123,7 +134,9 @@ fun MiLin(
             Dialog(onDismissRequest = {
                 CoroutineScope(Dispatchers.Main).launch {
                     addc = false
-                    if (!addCategory(newcategory))
+                    if (newcategory == "")
+                        snackbarHostState.showSnackbar("类别名为空")
+                    else if (!addCategory(newcategory))
                         snackbarHostState.showSnackbar("类别已存在或服务器错误")
                     onCategorySelected("$i")
                     i++
@@ -152,9 +165,8 @@ fun MiLin(
                 addc = true
             }, modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .size(width = 100.dp, height = 100.dp)
-//                .height(100.dp).width(200.dp)
-                .padding(16.dp)
+                .size(100.dp)
+                .padding(20.dp)
         ) {
             Icon(Icons.Default.Add, contentDescription = "添加类别")
 
@@ -171,9 +183,12 @@ fun MiLin(
                     showContextMenu = false
                 }, text = { Text("置顶") })
                 DropdownMenuItem(onClick = {
-                    removeCategory(contextMenuCategory)
-                    onCategorySelected("$i")
-                    i++
+                    CoroutineScope(Dispatchers.Main).launch {
+                        if (!removeCategory(contextMenuCategory))
+                            snackbarHostState.showSnackbar("服务器错误")
+                        onCategorySelected("$i")
+                        i++
+                    }
                     showContextMenu = false
                 }, text = { Text("删除") })
 
