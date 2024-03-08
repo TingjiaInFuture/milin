@@ -1,6 +1,6 @@
 package ztj.milin
 
-import ChatApi
+import Api
 import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -11,7 +11,6 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import ztj.milin.client.main
 import ztj.milin.ui.theme.MilinTheme
 
 class MainActivity : ComponentActivity() {
@@ -21,8 +20,8 @@ class MainActivity : ComponentActivity() {
 //        WindowCompat.setDecorFitsSystemWindows(window, false)//状态栏没必要隐藏
 
 
-        //预备工作
-        main()
+//        //预备工作
+//        main()
 
         // 从SharedPreferences中获取保存的用户信息
         val sharedPreferences = getSharedPreferences("user_info", Context.MODE_PRIVATE)
@@ -38,8 +37,8 @@ class MainActivity : ComponentActivity() {
             LaunchedEffect(Unit) {
                 // 检查用户是否存在
                 if (userId != 0) {
-                    val chatApi = ChatApi()
-                    val id = chatApi.checkUser(username)
+                    val api = Api()
+                    val id = api.checkUser(username)
                     if (id == 0) {
                         // 用户不存在，清除用户信息
                         with(sharedPreferences.edit()) {

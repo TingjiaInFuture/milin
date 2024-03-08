@@ -1,8 +1,8 @@
 package ztj.milin
 
-import ChatApi
+import Api
 
-val chatApi = ChatApi()
+val api = Api()
 
 data class User(var id: Int, var name: String)
 
@@ -18,7 +18,7 @@ suspend fun addCategory(category: String): Boolean {
     if (categories.contains(category)) {
         return false
     }
-    if (chatApi.addCategory(category)) {
+    if (api.addCategory(category)) {
         categories.add(category)
         return true
     }
@@ -30,7 +30,7 @@ suspend fun removeCategory(category: String): Boolean {
     if (!categories.contains(category)) {
         return false
     }
-    if (chatApi.deleteCategory(category)) {
+    if (api.deleteCategory(category)) {
         categories.remove(category)
         if (deleteAllSubcategories(category)) {
             subcategories.remove(category)
@@ -67,7 +67,7 @@ val userList = arrayListOf(
 val newuserList = ArrayList<User>()
 
 suspend fun addusertolist(user: String): Boolean {
-    val id = chatApi.checkUser(user)
+    val id = api.checkUser(user)
     return if (id == 0) {
         false
     } else {
@@ -77,11 +77,11 @@ suspend fun addusertolist(user: String): Boolean {
 }
 
 
-enum class Tab { Discover, Chat }
+enum class Tab { Discover, Chat, Explore }
 
 var categories = mutableListOf<String>()
 suspend fun initCategories() {
-    categories = chatApi.getCategories().toMutableList()
+    categories = api.getCategories().toMutableList()
 }
 
 
@@ -89,9 +89,9 @@ val subcategories = mutableMapOf<String, ArrayList<User>>()
 
 suspend fun initSubcategories() {
     for (category in categories) {
-        val subcategoryNames = chatApi.getSubcategories(category)
+        val subcategoryNames = api.getSubcategories(category)
         val subcategoryUsers = subcategoryNames.mapNotNull { name ->
-            val userId = chatApi.checkUser(name)
+            val userId = api.checkUser(name)
             if (userId != 0) User(id = userId, name = name) else null
         }
         subcategories[category] = ArrayList(subcategoryUsers)
@@ -101,7 +101,7 @@ suspend fun initSubcategories() {
 
 // 添加一个子类别
 suspend fun addSubcategory(category: String, user: User): Boolean {
-    if (chatApi.addSubcategory(category, user.name)) {
+    if (api.addSubcategory(category, user.name)) {
 
         if (subcategories.containsKey(category)) {
             subcategories[category]?.add(user)
@@ -115,7 +115,7 @@ suspend fun addSubcategory(category: String, user: User): Boolean {
 
 // 删除一个子类别
 suspend fun removeSubcategory(category: String, user: String): Boolean {
-    if (chatApi.deleteSubcategory(category, user)) {
+    if (api.deleteSubcategory(category, user)) {
         subcategories[category]?.removeIf { it.name == user }
         return true
     }
@@ -139,7 +139,7 @@ suspend fun deleteAllSubcategories(category: String): Boolean {
 
     // 遍历这些子类并逐个删除
     for (user in subcategories) {
-        val result = chatApi.deleteSubcategory(category, user.name)
+        val result = api.deleteSubcategory(category, user.name)
         if (!result) {
             success = false
         }

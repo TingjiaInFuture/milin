@@ -1,5 +1,7 @@
 package ztj.milin.client
 
+import BottleRequest
+import BottleResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.defaultRequest
@@ -180,6 +182,38 @@ class clienttest {
         return response.status.value == 201
     }
 
+    @OptIn(InternalAPI::class)
+    suspend fun addBottle(message: String): Boolean {
+        val json = Json { ignoreUnknownKeys = true }
+        val bottle = BottleRequest(message = message)
+        val jsonString = json.encodeToString(bottle)
+        val response: HttpResponse =
+            client.post("https://server-tni-serverllication-jlocxabspm.cn-hangzhou.fcapp.run/bottle") {
+                body = TextContent(jsonString, ContentType.Application.Json)
+            }
+
+        val responseBody = response.bodyAsText()
+        println("addBottle response: $responseBody")
+
+        return response.status.value == 201
+    }
+
+    suspend fun getBottle(): String {
+        val response: HttpResponse =
+            client.get("https://server-tni-serverllication-jlocxabspm.cn-hangzhou.fcapp.run/bottle")
+        val responseBody = response.bodyAsText()
+        val json = Json { ignoreUnknownKeys = true }
+
+
+        println("getBottle response: $responseBody")
+
+        return if (response.status.value == 200) {
+            json.decodeFromString<BottleResponse>(responseBody).message
+        } else {
+            "No bottles available."
+        }
+    }
+
 
 }
 
@@ -193,6 +227,15 @@ fun main() {
 //        clientTest.checkUser("User B")
         clientTest.registerUser(User(id = 3, name = "群聊3"), "123456")
         clientTest.registerUser(User(id = 4, name = "网络用户A"), "123456")
+        clientTest.registerUser(User(id = 4, name = "网络用户S"), "123456")
+//以下为测试代码
+        clientTest.addBottle("Hello, world!")
+        clientTest.addBottle("A")
+        clientTest.addBottle("B")
+        clientTest.getBottle()
+        clientTest.getBottle()
+        clientTest.getBottle()
+
 
 //        clientTest.addCategory("示例1")
 //        clientTest.getCategories()
@@ -244,4 +287,16 @@ data class MessageRequest(
     val message: String,
     val senderUsername: String,
     val receiverUsername: String
+)
+
+
+@Serializable
+data class BottleRequest(
+    val message: String
+)
+
+@Serializable
+data class BottleResponse(
+    val id: Int,
+    val message: String
 )

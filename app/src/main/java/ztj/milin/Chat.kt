@@ -1,6 +1,6 @@
 package ztj.milin
 
-import ChatApi
+import Api
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -45,13 +45,13 @@ import kotlinx.coroutines.launch
 fun Chat(user: User) {
 
     LaunchedEffect(Unit) {
-        val messages = chatApi.getMessages(user)
+        val messages = api.getMessages(user)
         val senders = messages.map { it.sender }.distinct()
         val userNames = userList.map { it.name }
         val newUsers = senders.filter { it !in userNames && it != user.name }
         val news: List<String> = newUsers.filterNotNull()
         val nuList = news.map { username ->
-            val id = chatApi.checkUser(username)
+            val id = api.checkUser(username)
             User(id, username)
         }
         newuserList.addAll(nuList)
@@ -170,7 +170,7 @@ fun UserList(cuser: User, suser: User?, users: List<User>, onUserSelected: (User
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Conversation(cuser: User, suser: User) {
-    val chatApi = ChatApi()
+    val api = Api()
 
     var conversation by remember { mutableStateOf(listOf<String>()) }
     var message by remember { mutableStateOf("") }
@@ -181,7 +181,7 @@ fun Conversation(cuser: User, suser: User) {
     LaunchedEffect(cuser, suser) {
         scope.launch {
             try {
-                val messages = chatApi.getMessages(suser)
+                val messages = api.getMessages(suser)
                 if (messages.isNotEmpty()) {
 
                     conversation = if (suser.id <= 3)
@@ -234,7 +234,7 @@ fun Conversation(cuser: User, suser: User) {
                 if (message.isNotBlank()) {
                     scope.launch {
                         try {
-                            val result = chatApi.addMessage(cuser, suser.name, message)
+                            val result = api.addMessage(cuser, suser.name, message)
                             if (result) {
                                 conversation = conversation + "You: $message"
                                 message = ""

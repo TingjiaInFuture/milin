@@ -1,6 +1,6 @@
 package ztj.milin
 
-import ChatApi
+import Api
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -41,7 +41,7 @@ fun Login(user: User, onLoginSuccess: (id: Int, name: String) -> Unit) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     val snackbarHostState = remember { SnackbarHostState() }
-    val chatApi = ChatApi()
+    val api = Api()
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -83,7 +83,7 @@ fun Login(user: User, onLoginSuccess: (id: Int, name: String) -> Unit) {
                     onClick = {
                         isLoading = true
                         CoroutineScope(Dispatchers.Main).launch {
-                            val success = chatApi.loginUser(user, password)
+                            val success = api.loginUser(user, password)
                             if (success != 0) {
                                 // 登录成功
                                 user.id = success
@@ -116,7 +116,7 @@ fun Login(user: User, onLoginSuccess: (id: Int, name: String) -> Unit) {
                     onClick = {
                         // 在这里执行注册逻辑
                         CoroutineScope(Dispatchers.Main).launch {
-                            val success = chatApi.registerUser(user, password)
+                            val success = api.registerUser(user, password)
 
                             if (success > 0) {
                                 // 注册成功

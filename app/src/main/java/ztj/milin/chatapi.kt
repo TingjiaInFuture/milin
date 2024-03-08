@@ -16,11 +16,11 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import ztj.milin.User
 
-class ChatApi {
+class Api {
 
     private val client = HttpClient(CIO) {
         engine {
-            requestTimeout = 10000 // 0 to disable, or a millisecond value to fit your needs
+//            requestTimeout = 10000
         }
         defaultRequest {
             header("admin_key", "123456")
@@ -198,6 +198,31 @@ class ChatApi {
         return response.status.value == 200
     }
 
+    @OptIn(InternalAPI::class)
+    suspend fun addBottle(message: String): Boolean {
+        val json = Json { ignoreUnknownKeys = true }
+        val bottle = BottleRequest(message = message)
+        val jsonString = json.encodeToString(bottle)
+        val response: HttpResponse =
+            client.post("https://server-tni-serverllication-jlocxabspm.cn-hangzhou.fcapp.run/bottle") {
+                body = TextContent(jsonString, ContentType.Application.Json)
+            }
+        return response.status.value == 201
+    }
+
+    suspend fun getBottle(): String {
+        val response: HttpResponse =
+            client.get("https://server-tni-serverllication-jlocxabspm.cn-hangzhou.fcapp.run/bottle")
+        val responseBody = response.bodyAsText()
+        val json = Json { ignoreUnknownKeys = true }
+
+        return if (response.status.value == 200) {
+            json.decodeFromString<BottleResponse>(responseBody).message
+        } else {
+            "No bottles available."
+        }
+    }
+
 
 }
 
@@ -217,4 +242,15 @@ data class MessageRequest(
     val message: String,
     val senderUsername: String,
     val receiverUsername: String
+)
+
+@Serializable
+data class BottleRequest(
+    val message: String
+)
+
+@Serializable
+data class BottleResponse(
+    val id: Int,
+    val message: String
 )

@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -45,7 +47,7 @@ fun Main(user: User) {
         bottomBar = {
             NavigationBar {
                 NavigationBarItem(
-                    icon = { Icon(imageVector = Icons.Default.Home, contentDescription = null) },
+                    icon = { Icon(imageVector = Icons.Default.Face, contentDescription = null) },
                     label = { Text("觅林") },
                     selected = selectedTab == Tab.Discover,
                     onClick = { selectedTab = Tab.Discover }
@@ -55,6 +57,12 @@ fun Main(user: User) {
                     label = { Text("对话") },
                     selected = selectedTab == Tab.Chat,
                     onClick = { selectedTab = Tab.Chat }
+                )
+                NavigationBarItem( // 新增的 Tab
+                    icon = { Icon(imageVector = Icons.Default.List, contentDescription = null) },
+                    label = { Text("发现") },
+                    selected = selectedTab == Tab.Explore,
+                    onClick = { selectedTab = Tab.Explore }
                 )
             }
         },
@@ -71,6 +79,7 @@ fun Main(user: User) {
                     )
 
                     Tab.Chat -> Chat(user)
+                    Tab.Explore -> Explore(user)
                 }
 
 //            SnackbarHost(
